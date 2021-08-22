@@ -5,22 +5,35 @@ import (
 	"strings"
 )
 
-type tableRow []interface{}
+type TableRow []interface{}
 type Table struct {
-	rows []tableRow
+	Heading TableRow
+	rows    []TableRow
 }
 
 const margin = 4
 
-func (t *Table) Append(x ...interface{}) {
+func (t *Table) AppendRow(x ...interface{}) *Table {
 	t.rows = append(t.rows, x)
+	return t
+}
+
+func (t *Table) AppendColumn(x ...interface{}) *Table {
+	diff := len(x) - len(t.rows)
+	if diff > 0 {
+		t.rows = append(t.rows, make([]TableRow, diff)...)
+	}
+	for i, v := range x {
+		t.rows[i] = append(t.rows[i], v)
+	}
+	return t
 }
 
 func (t *Table) String() string {
 	// convert to string matrix and get the max number of columns
 	var st [][]string
 	columns := 0
-	for _, sRow := range t.rows {
+	processRow := func(sRow TableRow) {
 		if len(sRow) > columns {
 			columns = len(sRow)
 		}
@@ -29,6 +42,12 @@ func (t *Table) String() string {
 			dRow = append(dRow, fmt.Sprintf("%v", sItem))
 		}
 		st = append(st, dRow)
+	}
+	if len(t.Heading) > 0 {
+		processRow(t.Heading)
+	}
+	for _, sRow := range t.rows {
+		processRow(sRow)
 	}
 	// compute the max width for each column
 	var widths []int
