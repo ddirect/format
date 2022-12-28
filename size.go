@@ -2,14 +2,14 @@ package format
 
 import "fmt"
 
-func Size(size int64) string {
-	x := float64(size)
+func Size[T int | uint | int32 | uint32 | int64 | uint64](size T) string {
+	s := float64(size)
 	prefixes := []string{"B", "kB", "MB", "GB", "TB", "PB"}
 	for i, prefix := range prefixes {
-		if x < 1000 || i == len(prefixes)-1 {
-			return fmt.Sprintf("%.3g %s", x, prefix)
+		if s < 1000 || i == len(prefixes)-1 {
+			return fmt.Sprintf("%.3g %s", s, prefix)
 		}
-		x /= 1024
+		s /= 1024
 	}
 	return ""
 }

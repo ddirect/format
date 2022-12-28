@@ -7,7 +7,7 @@ import (
 
 type TableRow []interface{}
 type Table struct {
-	Heading TableRow
+	heading TableRow
 	rows    []TableRow
 }
 
@@ -29,6 +29,10 @@ func (t *Table) AppendColumn(x ...interface{}) *Table {
 	return t
 }
 
+func (t *Table) SetHeading(x ...interface{}) {
+	t.heading = x
+}
+
 func (t *Table) String() string {
 	// convert to string matrix and get the max number of columns
 	var st [][]string
@@ -43,8 +47,8 @@ func (t *Table) String() string {
 		}
 		st = append(st, dRow)
 	}
-	if len(t.Heading) > 0 {
-		processRow(t.Heading)
+	if len(t.heading) > 0 {
+		processRow(t.heading)
 	}
 	for _, sRow := range t.rows {
 		processRow(sRow)
